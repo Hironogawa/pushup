@@ -1,0 +1,4 @@
+[v.1.] — Wed  2 Nov 2022 16:56:07 CET — User Hironogawa pushed to branch * main – minor: Inital commit – Versioning not working 
+[v..1] — Wed  2 Nov 2022 16:55:10 CET — User Hironogawa pushed to branch * main – patch: test 
+[v.1.] — Wed  2 Nov 2022 16:55:02 CET — User Hironogawa pushed to branch * main – minor: 3 
+[v.1.] — Wed  2 Nov 2022 16:54:58 CET — User Hironogawa pushed to branch * main – minor: tes 

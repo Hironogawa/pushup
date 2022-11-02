@@ -1,0 +1,81 @@
+#!/bin/bash
+time_and_date=`date`
+current_git_branch=`git branch`
+current_git_user=`git config user.name`
+LOG_FILE_NAME="pushup-logs.txt"
+
+# promt the the change type
+title="Hello, $current_git_user what type of change do you have?"
+prompt="Pick an option:"
+options=("major" "minor" "patch")
+
+echo "$title $promt"
+PS3="$prompt "
+select opt in "${options[@]}" "Quit"; do 
+    case "$REPLY" in
+    1) echo "What $opt changes did you do?"; break;;
+    2) echo "What $opt changes did you do?"; break;;
+    3) echo "What $opt changes did you do?"; break;;
+    $((${#options[@]}+1))) echo "Goodbye!"; break;;
+    *) echo "Invalid option. Try another one.";continue;;
+    esac
+done
+
+# while the the message is empty
+read commit_msg
+while [[ $commit_msg = "" ]]; do
+echo "Please provide a commit message, thank you!"
+read commit_msg
+done
+
+# bumping the current version from the push logs
+LOGS=./pushup-logs.txt
+if [[ -f "$LOGS" ]]; then
+GET_VERSION_FROM_LOG=$(head -n 1 pushup-logs.txt)
+else 
+GET_VERSION_FROM_LOG="[v0.0.0]"
+fi
+
+# RAW_VERSION=$(echo $CURRENT_VERSION | grep -o $REGEX_CLAMP)
+CURRENT_VERSION=$(echo "$GET_VERSION_FROM_LOG" | sed -E 's/(^|\])[^[]*($|\[)/ /g')
+#trim white space
+CURRENT_VERSION_NUMBERS=$(echo $CURRENT_VERSION | sed 's/v//g; s/ *$//g')
+
+IFS='.' read -ra VERSION_ARRAY <<< $CURRENT_VERSION_NUMBERS
+
+
+
+for i in $VERSION_ARRAY
+do
+    if [ "$opt" = "major" ]; then
+        major=$(echo "$((${VERSION_ARRAY[$i]} + 1))")
+    elif [ "$opt" = "minor" ]; then
+        minor=$(echo "$((${VERSION_ARRAY[$i]} + 1))")
+    else
+        patch=$(echo "$((${VERSION_ARRAY[$i]} + 1))")
+    fi
+done
+NEW_VERSION="v$major.$minor.$patch"
+# echo $RAW_VERSION 
+TEMP_LOGS=$(cat ./$LOG_FILE_NAME)
+echo -e "[$NEW_VERSION] — $time_and_date — User $current_git_user pushed to branch $current_git_branch – $opt: $commit_msg \n$TEMP_LOGS" > $LOG_FILE_NAME
+
+
+git add .
+# check if tag function is available 
+git commit -m \""$opt: $commit_msg\""
+git push
+
+if [[ $opt == "major" || $opt == "minor" ]]; then
+git tag -a $current_version_prefixed -m "$commit_msg"
+git push --tags
+fi
+
+echo -e "\n"
+echo -e "\n"
+echo -e "\n"
+
+echo "Thanks for the commit, happy hacking!"
+
+echo -e "\n"
+echo -e "\n"
